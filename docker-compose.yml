@@ -1,23 +1,22 @@
-version: '3.8'
-
+version: '3'
 services:
-  app:
+  php:
     build: .
     ports:
-      - "3000:80"
-    volumes:
-      - .:/var/www/html
+      - "7575:80"  # Exposing port 3000 for your PHP app
     depends_on:
-      - db
+      - mysql  # Make sure PHP waits for MySQL to be up before starting
+    networks:
+      - app_network
 
-  db:
-    image: mysql:5.7
-    restart: always
+  mysql:
+    image: mysql:5.7  # Using MySQL version 5.7
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: lost_and_found
-    volumes:
-      - db_data:/var/lib/mysql
+      MYSQL_ROOT_PASSWORD: root  # Set root password
+      MYSQL_DATABASE: lost_and_found  # Default database to create
+    networks:
+      - app_network
 
-volumes:
-  db_data:
+networks:
+  app_network:
+    driver: bridge
