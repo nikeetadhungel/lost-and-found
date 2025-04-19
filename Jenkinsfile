@@ -1,37 +1,42 @@
 pipeline {
     agent any
+
     environment {
-        // Define any environment variables here if necessary
-        DOCKER_IMAGE = 'dhungelnikeeta/lost-and-found'
-        REPO_URL = 'https://github.com/nikeetadhungel/lost-and-found.git'
+        // Set your Docker Hub credentials ID here
+        DOCKER_CREDENTIALS = '127712'  // Replace with your Docker Hub credentials ID
+        // Optionally, set the GitHub credentials ID if needed
+        GITHUB_CREDENTIALS = 'cca39903-a115-479a-ad6b-5b95c6191af0'  // Replace with your GitHub credentials ID
     }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from GitHub
-                checkout scm
+                // Checkout code from GitHub using GitHub credentials
+                git credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/nikeetadhungel/lost-and-found.git'
             }
         }
+        
         stage('Build Docker Image') {
             steps {
-                // Build the Docker image using Windows batch command
-                bat 'docker build -t %DOCKER_IMAGE% .'
-            }
-        }
-        stage('Push Docker Image') {
-            steps {
-                // Push the Docker image to Docker Hub using Windows batch command
-                bat 'docker push %DOCKER_IMAGE%'
+                script {
+                    // Log in to Docker Hub using the Docker Hub credentials
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS) {
+                        // Build the Docker image using the Dockerfile in the repository
+                        def customImage = docker.build('dhungelnikeeta/lost-and-found')
+                        // Push the Docker image to Docker Hub
+                        customImage.push()
+                    }
+                }
             }
         }
     }
+
     post {
         always {
-            // Clean up or perform any steps after the pipeline finishes
             echo 'Pipeline execution complete.'
         }
         success {
-            echo 'Build and Docker operations were successful.'
+            echo 'Build and Docker operations completed successfully.'
         }
         failure {
             echo 'There was an issue with the build or Docker operations.'
