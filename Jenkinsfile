@@ -2,17 +2,15 @@ pipeline {
     agent any
 
     environment {
-        // Set your Docker Hub credentials ID here
         DOCKER_CREDENTIALS = '127712'  // Replace with your Docker Hub credentials ID
-        // Optionally, set the GitHub credentials ID if needed
         GITHUB_CREDENTIALS = 'cca39903-a115-479a-ad6b-5b95c6191af0'  // Replace with your GitHub credentials ID
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub using GitHub credentials
-                git credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/nikeetadhungel/lost-and-found.git'
+                // Checkout code from GitHub using GitHub credentials and main branch
+                git credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/nikeetadhungel/lost-and-found.git', branch: 'main'
             }
         }
         
