@@ -14,14 +14,14 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                // Build the Docker image
-                bat 'docker build -t ${DOCKER_IMAGE} .'
+                // Build the Docker image using Windows batch command
+                bat 'docker build -t %DOCKER_IMAGE% .'
             }
         }
         stage('Push Docker Image') {
             steps {
-                // Push the Docker image to Docker Hub
-                bat 'docker push ${DOCKER_IMAGE}'
+                // Push the Docker image to Docker Hub using Windows batch command
+                bat 'docker push %DOCKER_IMAGE%'
             }
         }
     }
